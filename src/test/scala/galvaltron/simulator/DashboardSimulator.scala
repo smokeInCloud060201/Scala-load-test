@@ -1,27 +1,30 @@
 package galvaltron.simulator
 
+import galvaltron.constant.Constant.API_HOST
+import galvaltron.constant.Constant.RequestHeader._
 import io.gatling.core.Predef.*
 import io.gatling.http.Predef.*
 import scalaj.http.Http
+
 import scala.concurrent.duration.DurationInt
 
 class DashboardSimulator extends Simulation {
   val response = Http("https://identity-qa.spdigital-nonprod.auth0.com/oauth/token")
     .postForm(Seq(
-      "grant_type" -> "password",
-      "username" -> "mock.hos1@yopmail.com",
-      "password" -> "Abcd1234",
-      "audience" -> "https://profile.qa.up.spdigital.sg/",
-      "scope" -> "openid profile email read:contract read:company",
-      "client_id" -> "A9qjaQmOsC4OECo70cNx4xjl03BvaGGR"
+      GRANT_TYPE_KEY -> GRANT_TYPE,
+      USERNAME_KEY -> USERNAME,
+      PASSWORD_KEY -> PASSWORD,
+      AUDIENCE_KEY -> AUDIENCE,
+      SCOPE_KEY -> SCOPE,
+      CLIENT_ID_KEY -> CLIENT_ID
     ))
-    .header("Content-Type", "application/x-www-form-urlencoded")
+    .header(CONTENT_TYPE_KEY, CONTENT_TYPE_FORM)
     .asString
 
   val token = "Bearer " + ujson.read(response.body)("access_token").str
   println(s"Access Token from TokenManger: $token")
 
-  val httpProtocol = http.baseUrl("https://mera.api.sandbox.spdigital.sg")
+  val httpProtocol = http.baseUrl(API_HOST)
     .acceptHeader("*/*")
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
