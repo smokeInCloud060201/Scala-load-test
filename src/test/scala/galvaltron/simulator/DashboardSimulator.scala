@@ -1,14 +1,41 @@
 package galvaltron.simulator
 
+import galvaltron.constant.Constant.RequestHeader._
 import galvaltron.constant.Constant.{API_HOST, PROFILE_HOST}
-import galvaltron.constant.Constant.RequestHeader.*
-import io.gatling.core.Predef.*
-import io.gatling.http.Predef.*
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
 import scalaj.http.Http
+import galvaltron.interfaces.CommonInterface._
+import galvaltron.interfaces.Chart
+import galvaltron.interfaces.Data
+import galvaltron.interfaces.Inspections
+import galvaltron.interfaces.Member
+import galvaltron.interfaces.MyInspection
+import galvaltron.interfaces.MemberInspection
+import galvaltron.interfaces.StopWork
+import galvaltron.utils.Encoders._
+import io.circe.syntax.EncoderOps
 
 import scala.concurrent.duration.DurationInt
-
 class DashboardSimulator extends Simulation {
+
+  val payloadList = loadJsonFromFile("request-param.json") match {
+    case Right(data) => data
+    case Left(error) =>
+      println(s"Error loading JSON: $error")
+      List.empty[Data]
+  }
+
+  val totalRequestPayload = payloadList.headOption.getOrElse(Data(
+    MyInspection("", "", "", "", List.empty),
+    MemberInspection("", "", ""),
+    Member("", "", "", 0, 0, List.empty),
+    StopWork("", "", "", "", 0, 0, List.empty),
+    Inspections("", "", "", 0, 0, List.empty),
+    Chart("", "", "", "", 0, 0)
+  ))
+
+
   val response = Http(PROFILE_HOST + "/oauth/token")
     .postForm(Seq(
       GRANT_TYPE_KEY -> GRANT_TYPE,
@@ -29,91 +56,46 @@ class DashboardSimulator extends Simulation {
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
 
-
   val getMyInspection = http("Get My Inspection")
     .post("/galvatron/v1/dashboard/my-inspection")
     .header("Content-Type", "application/json")
     .header("Authorization", token)
-    .body(StringBody(
-      """{
-    "group_id": "1166212187920691200",
-    "start_time": "2024-08-01 01:00:00+08:00",
-    "end_time": "2024-08-23 16:08:49+08:00",
-    "filter_type": "MONTH",
-    "sortList": []
-}"""))
+    .body(StringBody(totalRequestPayload.myInspection.asJson.noSpaces))
     .check(status.is(200))
 
   val getMemberInspection = http("Get Member Inspection")
     .post("/galvatron/v1/dashboard/member-inspection")
     .header("Content-Type", "application/json")
     .header("Authorization", token)
-    .body(StringBody(
-      """{
-    "group_id": "1166212187920691200",
-    "start_time": "2024-08-01 01:00:00+08:00",
-    "end_time": "2024-08-23 17:56:44+08:00"
-}"""))
+    .body(StringBody(totalRequestPayload.memberInspection.asJson.noSpaces))
     .check(status.is(200))
 
   val getMember= http("Get Member")
     .post("/galvatron/v1/dashboard/member")
     .header("Content-Type", "application/json")
     .header("Authorization", token)
-    .body(StringBody(
-      """{
-    "group_id": "1166212187920691200",
-    "start_time": "2024-08-01 01:00:00+08:00",
-    "end_time": "2024-08-23 17:56:44+08:00",
-    "page": 0,
-    "size": 3,
-    "sortList": []
-}"""))
+    .body(StringBody(totalRequestPayload.member.asJson.noSpaces))
     .check(status.is(200))
 
   val getStopWork = http("Get Stop Work")
     .post("/galvatron/v1/dashboard/stop-work")
     .header("Content-Type", "application/json")
     .header("Authorization", token)
-    .body(StringBody(
-      """{
-    "group_id": "1166212187920691200",
-    "start_time": "2024-08-01 01:00:00+08:00",
-    "end_time": "2024-08-23 17:56:44+08:00",
-    "page": 0,
-    "size": 3,
-    "sortList": []
-}"""))
+    .body(StringBody(totalRequestPayload.stopWork.asJson.noSpaces))
     .check(status.is(200))
 
   val getInspections = http("Get Inspections")
     .post("/galvatron/v1/dashboard/inspections")
     .header("Content-Type", "application/json")
     .header("Authorization", token)
-    .body(StringBody(
-      """{
-    "group_id": "1166212187920691200",
-    "start_time": "2024-08-01 01:00:00+08:00",
-    "end_time": "2024-08-23 17:56:44+08:00",
-    "page": 0,
-    "size": 3,
-    "sortList": []
-}"""))
+    .body(StringBody(totalRequestPayload.inspections.asJson.noSpaces))
     .check(status.is(200))
 
   val getChart = http("Get Chart")
     .post("/galvatron/v1/dashboard/chart")
     .header("Content-Type", "application/json")
     .header("Authorization", token)
-    .body(StringBody(
-      """{
-    "group_id": "1166212187920691200",
-    "start_time": "2024-08-01 01:00:00+08:00",
-    "end_time": "2024-08-23 17:56:44+08:00",
-    "filter_type": "MONTH",
-    "page": 0,
-    "size": 20
-}"""))
+    .body(StringBody(totalRequestPayload.chart.asJson.noSpaces))
     .check(status.is(200))
 
   val scnMyInspection = scenario("Get My Inspection")

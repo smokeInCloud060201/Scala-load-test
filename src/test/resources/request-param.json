@@ -1,0 +1,49 @@
+[
+  {
+    "myInspection": {
+      "group_id": "1166212187920691200",
+      "start_time": "2024-08-01 01:00:00+08:00",
+      "end_time": "2024-08-23 16:08:49+08:00",
+      "filter_type": "MONTH",
+      "sortList": []
+    },
+    "memberInspection": {
+      "group_id": "1166212187920691200",
+      "start_time": "2024-08-01 01:00:00+08:00",
+      "end_time": "2024-08-23 17:56:44+08:00"
+    },
+    "member": {
+      "group_id": "1166212187920691200",
+      "start_time": "2024-08-01 01:00:00+08:00",
+      "end_time": "2024-08-23 17:56:44+08:00",
+      "page": 0,
+      "size": 3,
+      "sortList": []
+    },
+    "stopWork": {
+      "group_id": "1166212187920691200",
+      "group_type": "SECTION",
+      "start_time": "2024-08-01 01:00:00+08:00",
+      "end_time": "2024-08-23 17:56:44+08:00",
+      "page": 0,
+      "size": 3,
+      "sortList": []
+    },
+    "inspections": {
+      "group_id": "1166212187920691200",
+      "start_time": "2024-08-01 01:00:00+08:00",
+      "end_time": "2024-08-23 17:56:44+08:00",
+      "page": 0,
+      "size": 3,
+      "sortList": []
+    },
+    "chart": {
+      "group_id": "1166212187920691200",
+      "start_time": "2024-08-01 01:00:00+08:00",
+      "end_time": "2024-08-23 17:56:44+08:00",
+      "filter_type": "MONTH",
+      "page": 0,
+      "size": 20
+    }
+  }
+]
