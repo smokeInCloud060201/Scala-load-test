@@ -21,4 +21,5 @@ object Constant {
   }
   
   val API_HOST = "https://mera.api.sandbox.spdigital.sg"
+  val PROFILE_HOST = "https://identity-qa.spdigital-nonprod.auth0.com"
 }
