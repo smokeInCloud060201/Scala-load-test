@@ -7,6 +7,9 @@ setup:
 clean:
 	${MVN_BIN} clean
 
-test:
-	${MVN_BIN} gatling:test
+local:
+	${MVN_BIN} gatling:test -Denv=local
+
+qa:
+	${MVN_BIN} gatling:test -Denv=qa
 

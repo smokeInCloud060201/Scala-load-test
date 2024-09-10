@@ -1,5 +1,6 @@
 package galvaltron.simulator
 
+import com.typesafe.config.{Config, ConfigFactory}
 import galvaltron.constant.Constant.RequestHeader._
 import galvaltron.constant.Constant.{API_HOST, PROFILE_HOST}
 import io.gatling.core.Predef._
@@ -19,7 +20,15 @@ import io.circe.syntax.EncoderOps
 import scala.concurrent.duration.DurationInt
 class DashboardSimulator extends Simulation {
 
-  val payloadList = loadJsonFromFile("request-param.json") match {
+
+  private val environment : String = System.getProperty("env")
+  private val config: Config = ConfigFactory.parseResources("gatling.conf").getConfig("gatling")
+
+  private val requestParamsJsonName = config.getConfig(environment).getString("request_params")
+  println(s"requestParamsJsonName: $requestParamsJsonName")
+
+
+  val payloadList = loadJsonFromFile(requestParamsJsonName) match {
     case Right(data) => data
     case Left(error) =>
       println(s"Error loading JSON: $error")
